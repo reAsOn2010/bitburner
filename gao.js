@@ -7,10 +7,8 @@ export async function main(ns) {
   let host = ns.args[1];
   let m_security = await ns.getServerMinSecurityLevel(host);
   let m_money = await ns.getServerMaxMoney(host);
-  let growth = await ns.getServerGrowth(host);
-  if (growth > 100) {
-    growth = 100
-  }
+  let growth = await ns.getServerGrowth(host) / 20;
+
   let current = ns.getHostname()
   let common_log = "from:" + current + " target:" + host + "|" + "m_s:" + m_security + " m_m:" + m_money + "|"
   ns.tprint("growth:", growth)
