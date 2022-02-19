@@ -15,7 +15,7 @@ export async function main(ns) {
   growth = growth / 20
 
   let current = ns.getHostname()
-  let common_log = "from:" + current + " target:" + host + "|" + "m_s:" + m_security + " m_m:" + m_money + "|"
+  let common_log = "from:" + current + "|to:" + host + "|m_s:" + m_security + "|m_m:" + m_money + "|"
   ns.tprint("growth:", growth)
   while (true) { 
     let security = await ns.getServerSecurityLevel(host);

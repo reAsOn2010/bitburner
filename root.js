@@ -25,6 +25,7 @@ export async function main(ns) {
             }
             try {
                 ns.nuke(h)
+                // ns.installBackdoor(h)
             } catch (e) {
                 ns.tprint("host:", h, ",", e)
             }

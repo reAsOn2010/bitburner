@@ -16,16 +16,25 @@ export async function main(ns) {
             hosts.push(h)
             let _info = {
                 "name": h,
+                "root": ns.hasRootAccess(h),
+                "ports": ns.getServerNumPortsRequired(h),
                 "max_memory": ns.getServerMaxRam(h),
                 "used_memory": ns.getServerUsedRam(h),
-                "root": ns.hasRootAccess(h),
+                "min_security": ns.getServerMinSecurityLevel(h),
                 "security": ns.getServerSecurityLevel(h),
-                "ports": ns.getServerNumPortsRequired(h),
+                "max_money": ns.getServerMaxMoney(h),
+                "money": ns.getServerMoneyAvailable(h),
+                "growth": ns.getServerGrowth(h),
             }
-            if (_info["ports"] === 0) {
+            if (_info["root"]) {
                 info[h] = _info
             }
         }
     }
-    ns.print(info)
+    ns.tprintf("name|has_root|need_ports|max_memory|used_memory|min_security|security|max_money|money|growth")
+    for (const _info of Object.values(info)) {
+        ns.tprintf("%s|%s|%d|%d|%d|%f|%f|%d|%d|%f", 
+            _info["name"], _info["root"], _info["ports"], _info["max_memory"], _info["used_memory"],
+            _info["min_security"], _info["security"], _info["max_money"], _info["money"], _info["growth"])
+    }
 }
