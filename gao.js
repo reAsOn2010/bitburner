@@ -23,22 +23,19 @@ export async function main(ns) {
 
     let p_security = security / m_security * 100
     let p_money = money / m_money * 100
-
-    ns.tprint(common_log, "security:", p_security, "%");
-    ns.tprint(common_log, "money:", p_money, "%");
-
+    
     if (p_security > 120) {
-      ns.tprint(common_log, "weakening...")
+      ns.tprint(common_log, "security:", p_security, "%", "|", "money:", p_money, "%", "|", "weakening...");
       await ns.weaken(host)
     }
     else if (p_money < 100.0 / (100 + growth) * 100) {
-      ns.tprint(common_log, "growing...")
+      ns.tprint(common_log, "security:", p_security, "%", "|", "money:", p_money, "%", "|", "growing...");
       await ns.grow(host)
     } else {
-      ns.tprint(common_log, "hacking...")
+      ns.tprint(common_log, "security:", p_security, "%", "|", "money:", p_money, "%", "|", "hacking...");
       await ns.hack(host)
     }
-  }
+  }1
 }
 
 async function run(ns, host) {
