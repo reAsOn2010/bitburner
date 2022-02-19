@@ -27,7 +27,7 @@ export async function main(ns) {
     ns.tprint(common_log, "security:", p_security, "%");
     ns.tprint(common_log, "money:", p_money, "%");
 
-    if (p_security > 110) {
+    if (p_security > 120) {
       ns.tprint(common_log, "weakening...")
       await ns.weaken(host)
     }

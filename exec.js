@@ -27,8 +27,13 @@ export async function main(ns) {
             let connected = ns.scan(h).filter(it => it != "home" && ns.hasRootAccess(it) && ns.getServerMaxMoney(it) > 0)
             ns.tprint("host:", h, " target:", connected, " count:", count)
             for (let j = 0; j < Math.min(count, connected.length); j++) {
-                let threads = Math.floor(count / connected.length)
-                ns.exec("gao.js", h, threads, 1, connected[j])
+                let threads = Math.floor(count) / connected.length
+                let remains = Math.floor(count) % connected.length
+                if (j < remains) {
+                    ns.exec("gao.js", h, threads+1, 1, connected[j])
+                } else {
+                    ns.exec("gao.js", h, threads, 1, connected[j])
+                }
             }
             hosts.push(h)
         }
