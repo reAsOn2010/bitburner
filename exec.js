@@ -1,55 +1,54 @@
-/** @param {NS} ns **/
+import * as lib from "./lib.js";
+
+/** @param {import(".").NS } ns */
 export async function main(ns) {
-    let hosts = ["home"]
-    let i = 0
+    let hosts = lib.getHosts(ns)
     let ram = ns.getScriptRam("gao.js")
     let count = 0
-    while (true) {
-        if (i >= hosts.length) {
-            break
-        }
-        let host = hosts[i++]
-        let results = ns.scan(host)
-        for (const h of results) {
-            if (hosts.includes(h)) {
-                continue
-            }
-            hosts.push(h)
-        }
-    }
-    for (const h of hosts) {
+    let duplicator = 5
+    let servers = hosts.filter(it => ns.hasRootAccess(it))
+    servers.push("home")
+    for (const h of servers) {
         let max_ram = ns.getServerMaxRam(h)
+        if (h == "home") {
+            max_ram = Math.max(0, max_ram - 16)
+        }
         count += Math.floor(max_ram / ram)
     }
-    let servers = hosts.filter(it => it != "home" && ns.hasRootAccess(it))
-    let targets = hosts.filter(it => it != "home" && ns.hasRootAccess(it) && ns.getServerMaxMoney(it) > 0)
-    let threads = Math.floor(count / targets.length)
-    let remains = count % targets.length
-    let t_map = {}
-    for (let j = 0; j < targets.length; j++) {
-        if (j < remains) {
-            t_map[targets[j]] = threads + 1
-        } else {
-            t_map[targets[j]] = threads
+    let targets = lib.calcResource(ns, count)
+    for (const h of servers) {
+        let max_ram = ns.getServerMaxRam(h)
+        if (h == "home") {
+            max_ram = Math.max(0, max_ram - 16)
         }
-    }
-    for (const s of servers) {
-        let capacity = Math.floor(ns.getServerMaxRam(s) / ram)
+        let capacity = Math.floor(max_ram / ram)
         while (capacity > 0) {
-            let target = Object.keys(t_map)[0]
-            let needed = t_map[target]
+            let target = Object.keys(targets)[0]
+            if (target == null) {
+                break
+            }
+            let needed = targets[target]
             let _t = 0
             if (needed > capacity) {
                 _t = capacity
-                t_map[target] = needed - capacity
+                targets[target] = needed - capacity
                 capacity = 0
             } else if (needed <= capacity) {
                 _t = needed
                 capacity -= needed
-                delete t_map[target]
+                delete targets[target]
             }
-            ns.tprint("from:", s, "|", "to:", target, "|", "threads:", _t)
-            ns.exec("gao.js", s, _t, 1, target)
+            ns.tprint("from:", h, "|", "to:", target, "|", "replicas:", _t)
+            // let random = Math.random() * 1000
+            // let init_sleep = lib.calcInitSleep(ns, target, _t)
+            // init_sleep = 
+            for (let i = _t; i > 0; i -= duplicator) {
+                if (i < duplicator) {
+                    ns.exec("gao.js", h, i, target, Math.random() * 1000 * 60, ns.getServerMinSecurityLevel(target), ns.getServerMaxMoney(target))
+                } else {
+                    ns.exec("gao.js", h, duplicator, target, Math.random() * 1000 * 60, ns.getServerMinSecurityLevel(target), ns.getServerMaxMoney(target))
+                }
+            }
         }
     }
 }

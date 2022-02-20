@@ -20,7 +20,7 @@ const findPath = (ns, target, serverName, serverList, ignore, isFound) => {
 }
 
 
-/** @param {NS} ns **/
+/** @param {import(".").NS } ns */
 export async function main(ns) {
 	let startServer = ns.getHostname();
 	let target = ns.args[0];
