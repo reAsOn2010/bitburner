@@ -22,7 +22,7 @@ export function getHosts(ns) {
 export function calcResource(ns, capacity) {
     let resource = {}
     let info = {}
-    let reasonable = getHosts(ns).filter(it => ns.hasRootAccess(it) && ns.getServerRequiredHackingLevel(it) < ns.getHackingLevel())
+    let reasonable = getHosts(ns).filter(it => ns.hasRootAccess(it) && ns.getServerRequiredHackingLevel(it) < ns.getHackingLevel() + 1)
     let total = 0
     for (const h of reasonable) {
         info[h] = ns.getServerMaxMoney(h) / ns.getServerMinSecurityLevel(h)
@@ -44,7 +44,7 @@ export function calcInitSleep(ns, host, replicas) {
 
 /** @param {import(".").NS } ns */
 export function buynodes(ns) {
-    let threshold = ns.getServerMoneyAvailable("home") / 10
+    let threshold = ns.getServerMoneyAvailable("home") / 50
     for (let i = 0; i < ns.hacknet.numNodes(); i++) {
         if (ns.hacknet.getLevelUpgradeCost(i, 1) < threshold) {
             ns.hacknet.upgradeLevel(i, 1)
@@ -78,6 +78,7 @@ export async function buykubes(ns) {
     let limit = ns.getPurchasedServerLimit()
     for (let nextRam = Math.pow(2,  20); nextRam > currentRam; nextRam = nextRam / 2) {
         let cost = ns.getPurchasedServerCost(nextRam) * limit
+        ns.print("nextRam:",nextRam,"|","cost:",cost)
         if (cost < threshold) {
             stopScriptsAllServer(ns, limit)
             deleteAllServer(ns, limit)
@@ -91,7 +92,9 @@ export async function buykubes(ns) {
 /** @param {import(".").NS } ns */
 function stopScriptsAllServer(ns, limit) {
     for (let i = 0; i < limit; i++) {
-        ns.killall("kube-" + i)
+        if (ns.serverExists("kube-" + i)) {
+            ns.killall("kube-" + i)
+        }
     }
 }
 

@@ -22,7 +22,6 @@ export async function main(ns) {
         if (now - kube_timer > 1000 * 10) {
             ns.print("buy kubes...")
             if (await lib.buykubes(ns)) {
-                ns.print("here")
                 await execLoop(ns)
             }
             kube_timer = now
