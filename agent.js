@@ -90,10 +90,17 @@ function doExec(ns, meta) {
 
 /** @param {import(".").NS } ns */
 function printDetails(ns, meta) {
+    let dup = []
     for (const from of Object.keys(meta)) {
         let details = meta[from]
         for (const detail of details) {
-            ns.tprintf("from:%s|to:%s|security:%f|money:%f", detail["from"], detail["to"], detail["p_security"].toFixed(2), detail["p_money"].toFixed(2))
+            if (dup.includes(detail["to"])) {
+                continue
+            } else {
+                ns.tprintf("to:%s|security:%f|money:%f", detail["to"], detail["p_security"].toFixed(2), detail["p_money"].toFixed(2))
+                dup.push(detail["to"])
+            }
         }
     }
+    ns.tprintf("------")
 }
