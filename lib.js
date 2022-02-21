@@ -111,3 +111,12 @@ function purchaseAllServer(ns, limit, ram) {
         ns.purchaseServer("kube-" + i, ram)
     }
 }
+
+/** @param {import(".").NS } ns */
+export function getHostAvailableRam(ns, host) {
+    let max_ram = ns.getServerMaxRam(h) - ns.getScriptRam("agent.js")
+    if (h == "home") {
+        max_ram = Math.max(0, max_ram - 16)
+    }
+    return max_ram
+}
