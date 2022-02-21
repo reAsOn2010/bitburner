@@ -1,4 +1,4 @@
-import * as lib from "./lib.js"
+import { buynodes, buykubes } from "./lib.js"
 
 /** @param {import(".").NS } ns */
 export async function main(ns) {
@@ -16,12 +16,12 @@ export async function main(ns) {
         }
         if (now - node_timer > 200) { 
             ns.print("buy nodes...")
-            lib.buynodes(ns)
+            buynodes(ns)
             node_timer = now
         }
         if (now - kube_timer > 1000 * 10) {
             ns.print("buy kubes...")
-            if (await lib.buykubes(ns)) {
+            if (await buykubes(ns)) {
                 await execLoop(ns)
             }
             kube_timer = now

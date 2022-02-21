@@ -1,41 +1,38 @@
-import * as lib from "./lib.js";
+import {getHosts, getHostAvailableRam, calcResource} from "./lib.js";
 
 /** @param {import(".").NS } ns */
 export async function main(ns) {
-    let hosts = lib.getHosts(ns)
-    // let ram = ns.getScriptRam("gao.js")
+    let hosts = getHosts(ns)
     let ram = ns.getScriptRam("grow.js")
     let count = 0
-    // let duplicator = 5
     let servers = hosts.filter(it => ns.hasRootAccess(it))
-    servers.push("home")
-    for (const h of servers) {
-        let max_ram = lib.getHostAvailableRam(ns, h)
+    for (const src of servers) {
+        let max_ram = getHostAvailableRam(ns, src)
         count += Math.floor(max_ram / ram)
     }
-    let targets = lib.calcResource(ns, count)
-    for (const h of servers) {
-        let max_ram = lib.getHostAvailableRam(ns, h)
+    let targets = calcResource(ns, count)
+    let args = []
+    for (const from of servers) {
+        let max_ram = getHostAvailableRam(ns, from)
         let capacity = Math.floor(max_ram / ram)
-        let args = []
         while (capacity > 0) {
-            let target = Object.keys(targets)[0]
-            if (target == null) {       
+            let to = Object.keys(targets)[0]
+            if (to == null) {       
                 break
             }
-            let needed = targets[target]
-            let _t = 0
+            let needed = targets[to]
+            let replicas = 0
             if (needed > capacity) {
-                _t = capacity
-                targets[target] = needed - capacity
+                replicas = capacity
+                targets[to] = needed - capacity
                 capacity = 0
             } else if (needed <= capacity) {
-                _t = needed
+                replicas = needed
                 capacity -= needed
-                delete targets[target]
+                delete targets[to]
             }
-            ns.tprint("from:", h, "|", "to:", target, "|", "replicas:", _t)
-            args.push(target+"="+_t)
+            ns.tprint("from:", from, "|", "to:", to, "|", "replicas:", replicas)
+            args.push(from+"="+to+"="+replicas)
             // let random = Math.random() * 1000
             // let init_sleep = lib.calcInitSleep(ns, target, _t)
             // init_sleep = 
@@ -47,6 +44,6 @@ export async function main(ns) {
             //     }
             // }
         }
-        ns.exec("agent.js", h, 1, ...args)
     }
+    ns.exec("agent.js", "home", 1, ...args)
 }

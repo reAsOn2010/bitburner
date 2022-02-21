@@ -1,8 +1,8 @@
-import * as lib from "./lib.js";
+import { getHosts } from "./lib"
 
 /** @param {import(".").NS } ns */
 export async function main(ns) {
-    let hosts = lib.getHosts(ns)
+    let hosts = getHosts(ns)
     let info = {}
     for (const h of hosts) {
         let _info = {

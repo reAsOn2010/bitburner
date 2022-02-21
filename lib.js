@@ -15,7 +15,7 @@ export function getHosts(ns) {
             hosts.push(h)
         }
     }
-    return hosts.filter(it => it != "home")
+    return hosts
 }
 
 /** @param {import(".").NS } ns */
@@ -35,11 +35,6 @@ export function calcResource(ns, capacity) {
         }
     }
     return resource
-}
-
-/** @param {import(".").NS } ns */
-export function calcInitSleep(ns, host, replicas) {
-    return Math.round((ns.getGrowTime(host) + ns.getWeakenTime(host) + ns.getHackTime(host)) / replicas)
 }
 
 /** @param {import(".").NS } ns */
@@ -116,7 +111,7 @@ function purchaseAllServer(ns, limit, ram) {
 export function getHostAvailableRam(ns, host) {
     let max_ram = ns.getServerMaxRam(host) - ns.getScriptRam("agent.js")
     if (host == "home") {
-        max_ram = Math.max(0, max_ram - 16)
+        max_ram = Math.max(0, max_ram - 4 - ns.getScriptRam("all.js") - ns.getScriptRam("agent.js"))
     }
     return max_ram
 }
