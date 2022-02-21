@@ -14,7 +14,7 @@ export async function main(ns) {
             await execLoop(ns)
             timer = now
         }
-        if (now - node_timer > 1000) { 
+        if (now - node_timer > 200) { 
             ns.print("buy nodes...")
             lib.buynodes(ns)
             node_timer = now
@@ -26,7 +26,7 @@ export async function main(ns) {
             }
             kube_timer = now
         }
-        await ns.sleep(500)
+        await ns.sleep(200)
     }
 }
 

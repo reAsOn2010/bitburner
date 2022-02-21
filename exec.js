@@ -10,17 +10,17 @@ export async function main(ns) {
     let servers = hosts.filter(it => ns.hasRootAccess(it))
     servers.push("home")
     for (const h of servers) {
-        let max_ram = lib.getHostAvailableRam(h)
+        let max_ram = lib.getHostAvailableRam(ns, h)
         count += Math.floor(max_ram / ram)
     }
     let targets = lib.calcResource(ns, count)
     for (const h of servers) {
-        let max_ram = lib.getHostAvailableRam(h)
+        let max_ram = lib.getHostAvailableRam(ns, h)
         let capacity = Math.floor(max_ram / ram)
         let args = []
         while (capacity > 0) {
             let target = Object.keys(targets)[0]
-            if (target == null) {
+            if (target == null) {       
                 break
             }
             let needed = targets[target]

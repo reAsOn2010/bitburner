@@ -44,7 +44,7 @@ export function calcInitSleep(ns, host, replicas) {
 
 /** @param {import(".").NS } ns */
 export function buynodes(ns) {
-    let threshold = ns.getServerMoneyAvailable("home") / 50
+    let threshold = ns.getServerMoneyAvailable("home") / 10
     for (let i = 0; i < ns.hacknet.numNodes(); i++) {
         if (ns.hacknet.getLevelUpgradeCost(i, 1) < threshold) {
             ns.hacknet.upgradeLevel(i, 1)
@@ -114,8 +114,8 @@ function purchaseAllServer(ns, limit, ram) {
 
 /** @param {import(".").NS } ns */
 export function getHostAvailableRam(ns, host) {
-    let max_ram = ns.getServerMaxRam(h) - ns.getScriptRam("agent.js")
-    if (h == "home") {
+    let max_ram = ns.getServerMaxRam(host) - ns.getScriptRam("agent.js")
+    if (host == "home") {
         max_ram = Math.max(0, max_ram - 16)
     }
     return max_ram
