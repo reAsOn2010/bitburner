@@ -24,7 +24,7 @@ function buildMeta(ns) {
         let replicas = d[2]
         let detail = {
             "from": from,
-            "limit": Math.round(Math.log2(ns.getServerMaxRam(from))),
+            "limit": Math.round(Math.pow(1.5, Math.log2(ns.getServerMaxRam(from)))),
             "to": to,
             "replicas": replicas,
             "min_security": ns.getServerMinSecurityLevel(to),
@@ -70,6 +70,7 @@ function doExec(ns, meta) {
             if (threads == 0) {
                 threads = detail["limit"]
             }
+            await ns.sleep(Math.random() * 200)
             if (detail["p_security"] > 200) {
                 ns.exec("weaken.js", detail["from"], threads, detail["to"], detail["next_id"]++)
             } else if (detail["p_money"] < 95) {
