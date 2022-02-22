@@ -109,10 +109,9 @@ function purchaseAllServer(ns, limit, ram) {
 
 /** @param {import(".").NS } ns */
 export function getHostAvailableRam(ns, host) {
-    let max_ram = ns.getServerMaxRam(host) - ns.getScriptRam("agent.js")
+    let max_ram = ns.getServerMaxRam(host)
     if (host == "home") {
-        max_ram = Math.max(0, max_ram - 4 - ns.getScriptRam("all.js") - ns.getScriptRam("agent.js"))
-        ns.tprint(max_ram)
+        max_ram = Math.max(0, max_ram - 2*ns.getScriptRam("all.js") - 2*ns.getScriptRam("agent.js"))
     }
     return max_ram
 }

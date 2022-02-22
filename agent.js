@@ -10,7 +10,7 @@ export async function main(ns) {
             printDetails(ns, meta)
             timer = Date.now()
         }
-        await ns.sleep(100 + Math.random() * 400)
+        await ns.sleep(500)
     }
 }
 
@@ -98,18 +98,6 @@ function printDetails(ns, meta) {
                 continue
             } else {
                 ns.tprintf("to:%s|security:%f|money:%f", detail["to"], detail["p_security"].toFixed(2), detail["p_money"].toFixed(2))
-                dup.push(detail["to"])
-            }
-        }
-    }
-    ns.tprintf("------")
-    for (const from of Object.keys(meta)) {
-        let details = meta[from]
-        for (const detail of details) {
-            if (detail["from"] != "home") {
-                continue
-            } else {
-                ns.tprintf("to:%s|running:%d", detail["to"], detail["running"])
                 dup.push(detail["to"])
             }
         }
