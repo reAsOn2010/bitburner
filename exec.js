@@ -6,8 +6,8 @@ export async function main(ns) {
     let ram = ns.getScriptRam("grow.js")
     let count = 0
     let servers = hosts.filter(it => ns.hasRootAccess(it))
-    for (const src of servers) {
-        let max_ram = getHostAvailableRam(ns, src)
+    for (const from of servers) {
+        let max_ram = getHostAvailableRam(ns, from)
         count += Math.floor(max_ram / ram)
     }
     let targets = calcResource(ns, count)
@@ -31,7 +31,7 @@ export async function main(ns) {
                 capacity -= needed
                 delete targets[to]
             }
-            ns.tprint("from:", from, "|", "to:", to, "|", "replicas:", replicas)
+            ns.tprint("from:", from, "|", "to:", to, "|", "replicas:", replicas, "|", "total:", replicas * ns.getScriptRam("grow.js"), "|" , "capacity:", capacity)
             args.push(from+"="+to+"="+replicas)
             // let random = Math.random() * 1000
             // let init_sleep = lib.calcInitSleep(ns, target, _t)

@@ -47,12 +47,12 @@ function updateMeta(ns, meta) {
     for (const from of Object.keys(meta)) {
         let details = meta[from]
         for (const detail of details) {
-            let ps = ns.ps(detail["to"])
+            let ps = ns.ps(detail["from"])
             detail["security"] = ns.getServerSecurityLevel(detail["to"])
             detail["money"] = ns.getServerMoneyAvailable(detail["to"])
             detail["p_security"] = detail["security"] / detail["min_security"] * 100
             detail["p_money"] = detail["money"] / detail["max_money"] * 100
-            detail["running"] = ps.filter(it => ["grow.js", "hack.js", "weaken.js"].includes(it.filename) && it.args[0] == detail["name"]).reduce((sum, it) => sum + it.threads, 0)
+            detail["running"] = ps.filter(it => ["grow.js", "hack.js", "weaken.js"].includes(it.filename) && it.args[0] == detail["to"]).reduce((sum, it) => sum + it.threads, 0)
         }
     }
     return meta
@@ -98,6 +98,18 @@ function printDetails(ns, meta) {
                 continue
             } else {
                 ns.tprintf("to:%s|security:%f|money:%f", detail["to"], detail["p_security"].toFixed(2), detail["p_money"].toFixed(2))
+                dup.push(detail["to"])
+            }
+        }
+    }
+    ns.tprintf("------")
+    for (const from of Object.keys(meta)) {
+        let details = meta[from]
+        for (const detail of details) {
+            if (detail["from"] != "home") {
+                continue
+            } else {
+                ns.tprintf("to:%s|running:%d", detail["to"], detail["running"])
                 dup.push(detail["to"])
             }
         }

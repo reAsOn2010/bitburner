@@ -112,6 +112,7 @@ export function getHostAvailableRam(ns, host) {
     let max_ram = ns.getServerMaxRam(host) - ns.getScriptRam("agent.js")
     if (host == "home") {
         max_ram = Math.max(0, max_ram - 4 - ns.getScriptRam("all.js") - ns.getScriptRam("agent.js"))
+        ns.tprint(max_ram)
     }
     return max_ram
 }
