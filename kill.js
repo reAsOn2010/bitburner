@@ -4,10 +4,10 @@ import { getHosts } from "./lib"
 export async function main(ns) {
     let hosts = getHosts(ns)
     for (const h of hosts) {
-        // ns.scriptKill("grow.sh", h)
-        // ns.scriptKill("hack.sh", h)
-        // ns.scriptKill("weaken.sh", h)
-        ns.scriptKill("agent.sh", h)
+        // ns.scriptKill("grow.js", h)
+        // ns.scriptKill("hack.js", h)
+        // ns.scriptKill("weaken.js", h)
+        ns.scriptKill("agent.js", h)
         // ns.killall(h)
     }
 }
