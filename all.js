@@ -5,7 +5,6 @@ export async function main(ns) {
     ns.disableLog("ALL")
     let pids = {}
     let count = 0
-    await scpAll(ns)
     while (true) {
         if (count % (2 * 60 * 10) == 0) {
             rootAll(ns)
@@ -13,6 +12,7 @@ export async function main(ns) {
         if (count % (2 * 60 * 60) == 0) {
             ns.print("buy kubes...")
             buykubes(ns)
+            await scpAll(ns)
             ns.print("reload hwgw...")
             killHWGW(ns, pids)
             pids = runHWGW(ns)

@@ -62,7 +62,7 @@ async function HWGW(ns, target, id) {
     if (host == null) {
         return
     }
-    ns.tprint(host, ts)
+    // ns.tprint(host, ts)
     // let money = ns.getServerMoneyAvailable(target) / ns.getServerMaxMoney(target) * 100
     // let security = ns.getServerSecurityLevel(target) / ns.getServerMinSecurityLevel(target) * 100
     // ns.tprint(host, "|", target, "|", money.toFixed(2), "|", security.toFixed(2))
