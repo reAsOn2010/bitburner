@@ -1,43 +1,70 @@
-import { buynodes, buykubes } from "./lib.js"
+import { buykubes, buynodes, getHosts, getLoopTime, rootAll, scpAll, calcScore } from "./lib"
 
 /** @param {import(".").NS } ns */
 export async function main(ns) {
     ns.disableLog("ALL")
-    let timer = Date.now()
-    await execLoop(ns)
-    let kube_timer = Date.now()
-    let node_timer = Date.now()
+    let pids = {}
+    let count = 0
+    await scpAll(ns)
     while (true) {
-        let now = Date.now()
-        if (now - timer > 1000  * 60 *  60 * 2) {
-            ns.print("timeout reload all.")
-            await execLoop(ns)
-            timer = now
+        if (count % (2 * 60 * 10) == 0) {
+            rootAll(ns)
         }
-        if (now - node_timer > 1000) { 
+        if (count % (2 * 60 * 60) == 0) {
+            ns.print("buy kubes...")
+            buykubes(ns)
+            ns.print("reload hwgw...")
+            killHWGW(ns, pids)
+            pids = runHWGW(ns)
+        }
+        if (count % 1 == 0) { 
             ns.print("buy nodes...")
             buynodes(ns)
-            node_timer = now
         }
-        if (now - kube_timer > 1000 * 10) {
-            ns.print("buy kubes...")
-            if (await buykubes(ns)) {
-                await execLoop(ns)
-            }
-            kube_timer = now
-        }
+        count++
         await ns.sleep(500)
     }
 }
 
-import * as kill from "./kill.js" 
-import * as root from "./root.js"
-import * as scp from "./scp.js"
-import * as exec from "./exec.js"
 /** @param {import(".").NS } ns */
-export async function execLoop(ns) {
-    await kill.main(ns)
-    await root.main(ns)
-    await scp.main(ns)
-    await exec.main(ns)
+function killHWGW(ns, pids) {
+    for (const pid of Object.values(pids)) {
+        ns.kill(pid)
+    }
+}
+
+/** @param {import(".").NS } ns */
+export function runHWGW(ns) {
+    let scores = calcScore(ns, getLoopTime())
+    scores.sort((a, b) => {
+        if (a[1] > b[1]) return -1
+        else if (a[1] < b[1]) return 1
+        else return 0
+    })
+    let total_ram = getTotalRam(ns) - 8
+    // ns.tprint(total_ram)
+    let pids = {}
+    for (const info of scores) {
+        ns.tprint(info)
+        let target = info[0]
+        let cycles_per_loop = info[2]
+        let loop_ram = info[3]
+        total_ram -= Math.floor(cycles_per_loop) * Math.floor(loop_ram)
+        if (total_ram < 0 && Object.keys(pids).length > 0) {
+            break
+        }
+        let pid = ns.exec("hwgw.js", "home", 1, target)
+        pids[target] = pid
+    }
+    return pids
+}
+
+/** @param {import(".").NS } ns */
+function getTotalRam(ns) {
+    let hosts = getHosts(ns).filter(it => ns.hasRootAccess(it))
+    let total_ram = 0
+    for (const host of hosts) {
+        total_ram += ns.getServerMaxRam(host)
+    }
+    return total_ram
 }
