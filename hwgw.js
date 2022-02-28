@@ -1,22 +1,34 @@
-import { getLoopTime, calcHWGWThreads, getCycleRam, requestRam, prepareBase } from "./lib"
+import { getLoopTime, calcHWGWThreads, getCycleRam, requestRam } from "./lib"
 
 /** @param {import(".").NS } ns */
 export async function main(ns) {
     let target = ns.args[0]
     let id = 0
     while (ns.getServerMoneyAvailable(target) < ns.getServerMaxMoney(target)) {
-        let host = requestRam(ns, ns.getScriptRam("grow.js"))
-        if (host != null)
-            ns.exec("grow.js", host, prepareBase(), target, 0, id++)
-        host = requestRam(ns, ns.getScriptRam("weaken.js"))
-        if (host != null)
-            ns.exec("weaken.js", host, prepareBase(), target, 0, id++)
+        for (let base = 10; base > 0; base--) {
+            let host = requestRam(ns, base * ns.getScriptRam("grow.js"))
+            if (host != null) {
+                ns.exec("grow.js", host, base, target, 0, id++)
+                break
+            }
+        }
+        for (let base = 10; base > 0; base--) {
+            let host = requestRam(ns, base * ns.getScriptRam("weaken.js"))
+            if (host != null) {
+                ns.exec("weaken.js", host, base, target, 0, id++)
+                break
+            }
+        }
         await ns.sleep(200)
     }
     while (ns.getServerSecurityLevel(target) > ns.getServerMinSecurityLevel(target)) {
-        let host = requestRam(ns, ns.getScriptRam("weaken.js"))
-        if (host != null)
-            ns.exec("weaken.js", host, prepareBase(), target, 0, id++)
+        for (let base = 10; base > 0; base--) {
+            let host = requestRam(ns, ns.getScriptRam("weaken.js"))
+            if (host != null) {
+                ns.exec("weaken.js", host, base, target, 0, id++)
+                break
+            }
+        }
         await ns.sleep(200)
     }
     while (true) {

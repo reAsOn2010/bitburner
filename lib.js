@@ -153,10 +153,6 @@ export function getLoopTime() {
     return 1200
 }
 
-export function prepareBase() {
-    return 1
-}
-
 /** @param {import(".").NS } ns */
 export function calcHWGWThreads(ns, target, base=1) {
     let h = base
