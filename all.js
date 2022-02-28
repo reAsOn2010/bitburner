@@ -3,13 +3,15 @@ import { buykubes, buynodes, getHosts, getLoopTime, rootAll, scpAll, calcScore }
 /** @param {import(".").NS } ns */
 export async function main(ns) {
     ns.disableLog("ALL")
+    ns.tprint(ns.args[0])
+    let delay = 2 * 60 * 60
+    if (ns.args[0] == "quick")
+        delay = 2 * 60 * 10
     let pids = {}
     let count = 0
     while (true) {
-        if (count % (2 * 60 * 10) == 0) {
+        if (count % delay == 0) {
             rootAll(ns)
-        }
-        if (count % (2 * 60 * 60) == 0) {
             ns.print("buy kubes...")
             buykubes(ns)
             await scpAll(ns)
