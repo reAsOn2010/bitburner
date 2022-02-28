@@ -150,7 +150,11 @@ export function rootAll(ns) {
 }
 
 export function getLoopTime() {
-    return 1200
+    return 2000
+}
+
+export function maxBase() {
+    return 100
 }
 
 /** @param {import(".").NS } ns */
@@ -188,7 +192,11 @@ export function calcGrowThreads(ns, target, base=1) {
 export function requestRam(ns, ram) {
     let hosts = getHosts(ns).filter(it => ns.hasRootAccess(it))
     for (const host of hosts) {
-        if (ns.getServerMaxRam(host) - ns.getServerUsedRam(host) > ram) {
+        let maxRam = ns.getServerMaxRam(host)
+        if (host == "home") {
+            maxRam -= 8
+        }
+        if (maxRam - ns.getServerUsedRam(host) > ram) {
             return host
         }
     }

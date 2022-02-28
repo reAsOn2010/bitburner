@@ -1,35 +1,36 @@
-import { getLoopTime, calcHWGWThreads, getCycleRam, requestRam } from "./lib"
+import { getLoopTime, calcHWGWThreads, getCycleRam, requestRam, maxBase } from "./lib"
 
 /** @param {import(".").NS } ns */
 export async function main(ns) {
     let target = ns.args[0]
+    let skip_prepare = Boolean(ns.args[1])
     let id = 0
-    while (ns.getServerMoneyAvailable(target) < ns.getServerMaxMoney(target)) {
-        for (let base = 10; base > 0; base--) {
+    while (!skip_prepare && ns.getServerMoneyAvailable(target) < ns.getServerMaxMoney(target)) {
+        for (let base = maxBase(); base > 0; base--) {
             let host = requestRam(ns, base * ns.getScriptRam("grow.js"))
             if (host != null) {
                 ns.exec("grow.js", host, base, target, 0, id++)
                 break
             }
         }
-        for (let base = 10; base > 0; base--) {
+        for (let base = maxBase(); base > 0; base--) {
             let host = requestRam(ns, base * ns.getScriptRam("weaken.js"))
             if (host != null) {
                 ns.exec("weaken.js", host, base, target, 0, id++)
                 break
             }
         }
-        await ns.sleep(200)
+        await ns.sleep(getLoopTime())
     }
-    while (ns.getServerSecurityLevel(target) > ns.getServerMinSecurityLevel(target)) {
-        for (let base = 10; base > 0; base--) {
+    while (!skip_prepare && ns.getServerSecurityLevel(target) > ns.getServerMinSecurityLevel(target)) {
+        for (let base = maxBase(); base > 0; base--) {
             let host = requestRam(ns, ns.getScriptRam("weaken.js"))
             if (host != null) {
                 ns.exec("weaken.js", host, base, target, 0, id++)
                 break
             }
         }
-        await ns.sleep(200)
+        await ns.sleep(getLoopTime())
     }
     while (true) {
         if (id % 600 == 0) {
@@ -59,7 +60,7 @@ async function HWGW(ns, target, id) {
     let w2_sleep = loop - weaken_time + getLoopTime() / 4 * 3
     let host = null
     let ts = null
-    for (let base = 10; base > 0; base--) {
+    for (let base = maxBase(); base > 0; base--) {
         let tmp_ts = calcHWGWThreads(ns, target, base)
         let cycle_ram = getCycleRam(ns, tmp_ts)
         let tmp_host = requestRam(ns, cycle_ram)

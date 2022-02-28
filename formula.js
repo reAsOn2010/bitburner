@@ -39,7 +39,7 @@ export function hackPercent(ns, server, player){
 /** @param {import(".").NS } ns */
 export function growPercent(ns, server, threads, player, cores = 1) {
     if (ns.fileExists("Formulas.exe", "home")) {
-        return ns.formulas.hacking.growPercent(server, player)
+        return ns.formulas.hacking.growPercent(server, threads, player, cores)
     }
     const numServerGrowthCycles = Math.max(Math.floor(threads), 0);
     const growthRate = 1.03//CONSTANTS.ServerBaseGrowthRate;
