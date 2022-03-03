@@ -154,7 +154,7 @@ export function getLoopTime() {
 }
 
 export function maxBase() {
-    return 100
+    return 20
 }
 
 /** @param {import(".").NS } ns */

@@ -17,10 +17,10 @@ export async function main(ns) {
             await scpAll(ns)
             ns.print("reload hwgw...")
             killHWGW(ns, pids)
-            pids = runHWGW(ns, count != 0)
+            pids = runHWGW(ns, pids)
         }
         if (count % 1 == 0) { 
-            ns.print("buy nodes...")
+            // ns.print("buy nodes...")
             buynodes(ns)
         }
         count++
@@ -36,7 +36,7 @@ function killHWGW(ns, pids) {
 }
 
 /** @param {import(".").NS } ns */
-export function runHWGW(ns, skip_prepare=false) {
+export function runHWGW(ns, origin_pids={}) {
     let scores = calcScore(ns, getLoopTime())
     scores.sort((a, b) => {
         if (a[1] > b[1]) return -1
@@ -44,7 +44,7 @@ export function runHWGW(ns, skip_prepare=false) {
         else return 0
     })
     let total_ram = getTotalRam(ns) - 8
-    // ns.tprint(total_ram)
+    ns.tprint(origin_pids)
     let pids = {}
     for (const info of scores) {
         ns.tprint(info)
@@ -55,9 +55,14 @@ export function runHWGW(ns, skip_prepare=false) {
         if (total_ram < 0 && Object.keys(pids).length > 0) {
             break
         }
+        let skip_prepare = false
+        if (ns.getServerMoneyAvailable(target) / ns.getServerMaxMoney(target) > 0.9 && 
+                ns.getServerSecurityLevel(target) / ns.getServerMinSecurityLevel(target) < 1.1) {
+            skip_prepare = true
+        }
         let pid = ns.exec("hwgw.js", "home", 1, target, skip_prepare)
         pids[target] = pid
-        if (Object.keys(pids).length > 4) {
+        if (Object.keys(pids).length > 9) {
             break
         }
     }

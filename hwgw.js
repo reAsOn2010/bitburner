@@ -24,7 +24,7 @@ export async function main(ns) {
     }
     while (!skip_prepare && ns.getServerSecurityLevel(target) > ns.getServerMinSecurityLevel(target)) {
         for (let base = maxBase(); base > 0; base--) {
-            let host = requestRam(ns, ns.getScriptRam("weaken.js"))
+            let host = requestRam(ns, base * ns.getScriptRam("weaken.js"))
             if (host != null) {
                 ns.exec("weaken.js", host, base, target, 0, id++)
                 break
