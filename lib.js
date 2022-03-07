@@ -221,7 +221,7 @@ export function calcScore(ns) {
         let score = ns.getServerMaxMoney(host) * formula.hackPercent(ns, server, player) * formula.hackChance(ns, server, player) * cycles_per_loop
         // ns.tprint(ns.getServerMaxMoney(host), "|", formula.hackPercent(ns, server, player), "|", formula.hackChance(ns, server, player))
         // ns.tprint(host, "|", score, "|", cycles_per_loop, "|", loop_ram)
-        if (score > 0) {
+        if (score > 0 && cycles_per_loop < 60 * 10) {
             scores.push([host, score, cycles_per_loop, loop_ram])
         }
     }
