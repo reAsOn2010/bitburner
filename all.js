@@ -6,7 +6,7 @@ export async function main(ns) {
     ns.tprint(ns.args[0])
     let delay = 2 * 60 * 60
     if (ns.args[0] == "quick")
-        delay = 2 * 60 * 10
+        delay = 2 * 60
     let pids = {}
     let count = 0
     while (true) {
